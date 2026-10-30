@@ -14,6 +14,5 @@ Describe the change in one or two sentences.
 
 - [ ] `zig build` passes in `zig/`
 - [ ] Generated C++ compiles with `g++ -std=c++17`
-- [ ] Example in `examples/hello.zph` still runs
 - [ ] `README.md` updated if user-facing behavior changed
 - [ ] `CHANGELOG.md` updated under `[Unreleased]`
