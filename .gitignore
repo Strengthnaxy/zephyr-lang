@@ -7,38 +7,13 @@ zig/zig-out/
 *.a
 *.lib
 
-# Rust
-rust/target/
-**/*.rs.bk
-Cargo.lock
-
-# C++
-cpp/*.o
-cpp/*.obj
-*.exe
-
-# PHP
-php/vendor/
-
-# OCaml
-ocaml/_build/
-ocaml/*.cmi
-ocaml/*.cmo
-ocaml/*.cmx
-ocaml/*.o
-
-# Ruby
-ruby/.bundle/
-ruby/vendor/
+# Generated output
+*.cpp
+hello
 
 # Editor / OS
 .vscode/
 .idea/
 *.swp
-*.swo
 .DS_Store
 Thumbs.db
-
-# Generated output
-*.cpp
-hello
