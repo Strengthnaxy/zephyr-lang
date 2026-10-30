@@ -1,11 +1,6 @@
 * text=auto eol=lf
 
 *.zig   text eol=lf
-*.rs    text eol=lf
-*.cpp   text eol=lf
-*.hpp   text eol=lf
-*.php   text eol=lf
-*.ml    text eol=lf
-*.rb    text eol=lf
+*.zph   text eol=lf
 *.md    text eol=lf
 *.toml  text eol=lf
