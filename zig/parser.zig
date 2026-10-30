@@ -111,6 +111,7 @@ pub const Parser = struct {
             const name = (try self.expect(.Ident)).value;
             _ = try self.expect(.Colon);
             const ty = try self.parse_type();
+            _ = try self.expect(.Assign);
             const value = try self.parse_expr();
             _ = try self.expect(.Semicolon);
             return .{ .let_decl = .{ .name = name, .ty = ty, .value = value, .mutable = mutable } };
