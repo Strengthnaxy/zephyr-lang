@@ -1,0 +1,9 @@
+[package]
+name = "zephyr-rust"
+version = "0.2.1-beta"
+edition = "2021"
+license = "MIT"
+
+[[bin]]
+name = "zephyr-rust"
+path = "src/main.rs"
