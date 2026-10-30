@@ -8,11 +8,11 @@ Format follows Keep a Changelog. Versioning follows Semantic Versioning.
 ## [0.1.0] - 2026-10-30
 
 ### Added
-- Initial Zig-based lexer, parser, and C++17 code generator.
-- Runtime header `cpp/runtime.hpp` with `string` and `print`.
-- Windows installer written in Rust (`rust/`).
-- Elixir Language Server prototype (`elixir/zephyr_lsp.ex`).
-- Haskell AST reference specification (`haskell/ZephyrAst.hs`).
-- Example program `examples/hello.zph`.
-- GitHub CI workflow for Zig, C++, Rust, Elixir and Haskell builds.
-- MIT license, `.gitignore`, `.gitattributes`, issue/PR templates.
+- Zig compiler with lexer, parser and C++17 code generator.
+- Rust installer for Windows.
+- C++ runtime header and stub.
+- PHP landing page.
+- OCaml reference AST.
+- Ruby local build helper.
+- CI workflow for Zig, Rust, C++, PHP, OCaml and Ruby.
+- MIT license, `.gitignore`, `.gitattributes`, issue and PR templates.
