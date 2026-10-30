@@ -2,12 +2,24 @@
 zig/zig-cache/
 zig/.zig-cache/
 zig/zig-out/
-*.o
-*.obj
-*.a
-*.lib
 
-# Generated output
+# Rust
+rust/target/
+Cargo.lock
+
+# Ruby
+ruby/.bundle/
+ruby/vendor/
+*.gem
+
+# OCaml
+ocaml/_build/
+*.cmi
+*.cmo
+*.cmx
+*.o
+
+# Generated
 *.cpp
 hello
 
@@ -16,4 +28,3 @@ hello
 .idea/
 *.swp
 .DS_Store
-Thumbs.db
