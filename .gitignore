@@ -7,33 +7,29 @@ zig/zig-out/
 *.a
 *.lib
 
-# C++
-cpp/*.o
-cpp/*.obj
-*.exe
-*.out
-hello
-hello.cpp
-
 # Rust
 rust/target/
 **/*.rs.bk
 Cargo.lock
 
-# Elixir
-elixir/_build/
-elixir/deps/
-elixir/erl_crash.dump
-*.ez
-*.beam
+# C++
+cpp/*.o
+cpp/*.obj
+*.exe
 
-# Haskell
-haskell/dist/
-haskell/dist-newstyle/
-haskell/.stack-work/
-*.hi
-*.dyn_hi
-*.dyn_o
+# PHP
+php/vendor/
+
+# OCaml
+ocaml/_build/
+ocaml/*.cmi
+ocaml/*.cmo
+ocaml/*.cmx
+ocaml/*.o
+
+# Ruby
+ruby/.bundle/
+ruby/vendor/
 
 # Editor / OS
 .vscode/
@@ -43,12 +39,6 @@ haskell/.stack-work/
 .DS_Store
 Thumbs.db
 
-# Generated C++ from Zephyr
-examples/*.cpp
-examples/hello
-
-# Local AUR build artifacts
-aur/pkg/
-aur/src/
-aur/*.pkg.tar.*
-aur/*.tar.gz
+# Generated output
+*.cpp
+hello
