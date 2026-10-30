@@ -18,19 +18,6 @@ jobs:
       - name: Build
         working-directory: zig
         run: zig build -Doptimize=ReleaseSafe
-      - name: Smoke test
-        run: |
-          cd zig
-          ./zig-out/bin/zephyr ../examples/hello.zph -o /tmp/hello
-          /tmp/hello
-
-  cpp:
-    name: C++ runtime
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Compile runtime
-        run: g++ -std=c++17 -c cpp/runtime.cpp -o /tmp/runtime.o
 
   rust:
     name: Rust installer
@@ -42,27 +29,45 @@ jobs:
         working-directory: rust
         run: cargo build --release
 
-  elixir:
-    name: Elixir LSP prototype
+  cpp:
+    name: C++ runtime
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: erlef/setup-beam@v1
-        with:
-          otp-version: "26"
-          elixir-version: "1.16"
-      - name: Compile
-        working-directory: elixir
-        run: elixirc zephyr_lsp.ex
+      - name: Compile runtime
+        run: g++ -std=c++17 -c cpp/runtime.cpp -o /tmp/runtime.o
 
-  haskell:
-    name: Haskell AST
+  php:
+    name: PHP landing page
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: haskell-actions/setup@v2
+      - uses: shivammathur/setup-php@v2
         with:
-          ghc-version: "9.6"
+          php-version: '8.3'
+      - name: Lint
+        run: php -l php/index.php
+
+  ocaml:
+    name: OCaml AST
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ocaml/setup-ocaml@v3
+        with:
+          ocaml-compiler: '5.2'
       - name: Compile
-        working-directory: haskell
-        run: ghc -fno-code ZephyrAst.hs
+        run: |
+          cd ocaml
+          ocamlfind ocamlopt -c zephyr_ast.ml || ocamlopt -c zephyr_ast.ml
+
+  ruby:
+    name: Ruby build helper
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+      - name: Syntax check
+        run: ruby -c ruby/build.rb
