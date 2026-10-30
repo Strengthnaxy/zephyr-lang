@@ -1,6 +1,0 @@
-* text=auto eol=lf
-
-*.zig   text eol=lf
-*.zph   text eol=lf
-*.md    text eol=lf
-*.toml  text eol=lf
