@@ -3,13 +3,14 @@ const lexer = @import("lexer.zig");
 const parser = @import("parser.zig");
 const codegen = @import("codegen.zig");
 
-pub fn main() !void {
-    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+pub fn main(init: std.process.Init) !void {
+    var gpa = std.heap.DebugAllocator(.{}){};
     defer _ = gpa.deinit();
     const allocator = gpa.allocator();
+    const io = init.io;
 
-    const args = try std.process.argsAlloc(allocator);
-    defer std.process.argsFree(allocator, args);
+    const args = try init.minimal.args.toSlice(allocator);
+    defer allocator.free(args);
 
     if (args.len < 4) {
         std.debug.print("Usage: zephyr <input.zph> -o <output>\n", .{});
@@ -19,10 +20,8 @@ pub fn main() !void {
     const input_path = args[1];
     const output_base = args[3];
 
-    const source = std.fs.cwd().readFileAlloc(allocator, input_path, 1024 * 1024) catch |err| {
-        std.debug.print("Error reading {s}: {}\n", .{ input_path, err });
-        std.process.exit(1);
-    };
+    const cwd = std.Io.Dir.cwd();
+    const source = try cwd.readFileAlloc(io, input_path, allocator, .unlimited);
     defer allocator.free(source);
 
     var lex = lexer.Lexer.init(allocator, source);
@@ -48,7 +47,7 @@ pub fn main() !void {
     const cpp_path = try std.fmt.allocPrint(allocator, "{s}.cpp", .{output_base});
     defer allocator.free(cpp_path);
 
-    try std.fs.cwd().writeFile(.{ .sub_path = cpp_path, .data = cpp_code });
+    try cwd.writeFile(io, .{ .sub_path = cpp_path, .data = cpp_code });
 
     var child = std.process.Child.init(
         &.{ "g++", "-std=c++17", cpp_path, "-o", output_base },
