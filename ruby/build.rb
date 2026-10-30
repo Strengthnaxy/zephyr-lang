@@ -1,9 +1,6 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-# Helper that builds the Zig compiler and compiles every .zph file
-# in the examples directory. Intended for local development only.
-
 require 'fileutils'
 
 ROOT = File.expand_path(__dir__ + '/..')
