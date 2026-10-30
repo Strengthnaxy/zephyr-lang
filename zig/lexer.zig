@@ -35,8 +35,8 @@ pub const Lexer = struct {
     }
 
     pub fn tokenize(self: *Lexer) ![]Token {
-        var tokens = std.ArrayList(Token).init(self.allocator);
-        errdefer tokens.deinit();
+        var tokens = std.ArrayList(Token).empty;
+        errdefer tokens.deinit(self.allocator);
 
         while (true) {
             const c = self.peek() orelse break;
@@ -66,7 +66,7 @@ pub const Lexer = struct {
                     else if (std.mem.eql(u8, word, "var")) .Var
                     else if (std.mem.eql(u8, word, "return")) .Return
                     else .Ident;
-                try tokens.append(.{ .type = tt, .value = word });
+                try tokens.append(self.allocator, .{ .type = tt, .value = word });
                 continue;
             }
 
@@ -76,7 +76,7 @@ pub const Lexer = struct {
                     if (!std.ascii.isDigit(ch)) break;
                     _ = self.advance();
                 }
-                try tokens.append(.{ .type = .Number, .value = self.source[start..self.pos] });
+                try tokens.append(self.allocator, .{ .type = .Number, .value = self.source[start..self.pos] });
                 continue;
             }
 
@@ -89,7 +89,7 @@ pub const Lexer = struct {
                 }
                 const s = self.source[start..self.pos];
                 _ = self.advance();
-                try tokens.append(.{ .type = .String, .value = s });
+                try tokens.append(self.allocator, .{ .type = .String, .value = s });
                 continue;
             }
 
@@ -111,10 +111,10 @@ pub const Lexer = struct {
                     return error.LexError;
                 },
             };
-            try tokens.append(.{ .type = tt, .value = self.source[self.pos - 1 .. self.pos] });
+            try tokens.append(self.allocator, .{ .type = tt, .value = self.source[self.pos - 1 .. self.pos] });
         }
 
-        try tokens.append(.{ .type = .Eof, .value = "" });
-        return tokens.toOwnedSlice();
+        try tokens.append(self.allocator, .{ .type = .Eof, .value = "" });
+        return tokens.toOwnedSlice(self.allocator);
     }
 };
