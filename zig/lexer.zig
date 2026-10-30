@@ -6,6 +6,7 @@ pub const TokenType = enum {
     LParen, RParen, LBrace, RBrace,
     Colon, Semicolon, Arrow,
     Plus, Minus, Star, Slash,
+    Assign,
     Eof,
 };
 
@@ -106,6 +107,7 @@ pub const Lexer = struct {
                     break :blk .Minus;
                 },
                 '*' => .Star, '/' => .Slash,
+                '=' => .Assign,
                 else => {
                     std.debug.print("Unknown char: {c}\n", .{c});
                     return error.LexError;
