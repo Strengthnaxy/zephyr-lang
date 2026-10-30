@@ -1,0 +1,15 @@
+* text=auto eol=lf
+
+*.zph   text eol=lf
+*.zig   text eol=lf
+*.rs    text eol=lf
+*.cpp   text eol=lf
+*.hpp   text eol=lf
+*.ex    text eol=lf
+*.hs    text eol=lf
+*.md    text eol=lf
+
+*.png   binary
+*.jpg   binary
+*.zip   binary
+*.tar.gz binary
