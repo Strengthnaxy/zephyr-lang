@@ -8,13 +8,13 @@ pub fn build(b: *std.Build) void {
         .root_source_file = b.path("main.zig"),
         .target = target,
         .optimize = optimize,
+        .link_libc = true,
     });
 
     const exe = b.addExecutable(.{
         .name = "zephyr",
         .root_module = mod,
     });
-    exe.linkLibC();
     b.installArtifact(exe);
 
     const run_step = b.step("run", "Run the compiler");
