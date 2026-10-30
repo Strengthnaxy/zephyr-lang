@@ -49,14 +49,12 @@ pub fn main(init: std.process.Init) !void {
 
     try cwd.writeFile(io, .{ .sub_path = cpp_path, .data = cpp_code });
 
-    var child = std.process.Child.init(
-        &.{ "g++", "-std=c++17", cpp_path, "-o", output_base },
-        allocator,
-    );
-    try child.spawn();
-    const term = try child.wait();
-    if (term.Exited != 0) {
-        std.debug.print("g++ failed with code {}\n", .{term.Exited});
+    var child = try std.process.spawn(io, .{
+        .argv = &.{ "g++", "-std=c++17", cpp_path, "-o", output_base },
+    });
+    const term = try child.wait(io);
+    if (term.exited != 0) {
+        std.debug.print("g++ failed with code {}\n", .{term.exited});
         std.process.exit(1);
     }
 }
