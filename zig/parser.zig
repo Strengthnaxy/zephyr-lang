@@ -147,9 +147,9 @@ pub const Parser = struct {
         const ret = try self.parse_type();
         _ = try self.expect(.LBrace);
 
-        var body = std.ArrayList(Stmt).init(self.allocator);
+        var body = std.ArrayList(Stmt).empty;
         while (self.peek().type != .RBrace and self.peek().type != .Eof) {
-            try body.append(try self.parse_stmt());
+            try body.append(self.allocator, try self.parse_stmt());
         }
         _ = try self.expect(.RBrace);
 
@@ -157,15 +157,15 @@ pub const Parser = struct {
             .name = name,
             .params = &.{},
             .ret = ret,
-            .body = try body.toOwnedSlice(),
+            .body = try body.toOwnedSlice(self.allocator),
         };
     }
 
     pub fn parse(self: *Parser) !Program {
-        var fns = std.ArrayList(Function).init(self.allocator);
+        var fns = std.ArrayList(Function).empty;
         while (self.peek().type != .Eof) {
-            try fns.append(try self.parse_fn());
+            try fns.append(self.allocator, try self.parse_fn());
         }
-        return .{ .functions = try fns.toOwnedSlice() };
+        return .{ .functions = try fns.toOwnedSlice(self.allocator) };
     }
 };
