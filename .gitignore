@@ -1,0 +1,54 @@
+# Zig
+zig/zig-cache/
+zig/.zig-cache/
+zig/zig-out/
+*.o
+*.obj
+*.a
+*.lib
+
+# C++
+cpp/*.o
+cpp/*.obj
+*.exe
+*.out
+hello
+hello.cpp
+
+# Rust
+rust/target/
+**/*.rs.bk
+Cargo.lock
+
+# Elixir
+elixir/_build/
+elixir/deps/
+elixir/erl_crash.dump
+*.ez
+*.beam
+
+# Haskell
+haskell/dist/
+haskell/dist-newstyle/
+haskell/.stack-work/
+*.hi
+*.dyn_hi
+*.dyn_o
+
+# Editor / OS
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Generated C++ from Zephyr
+examples/*.cpp
+examples/hello
+
+# Local AUR build artifacts
+aur/pkg/
+aur/src/
+aur/*.pkg.tar.*
+aur/*.tar.gz
