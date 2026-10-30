@@ -1,11 +1,6 @@
 <?php
 declare(strict_types=1);
 
-/**
- * Minimal landing page for the Zephyr project.
- * Serves static documentation links and a status badge.
- */
-
 $version = trim((string)@file_get_contents(__DIR__ . '/../VERSION'));
 if ($version === '') {
     $version = 'unknown';
