@@ -32,7 +32,7 @@ pub fn main(init: std.process.Init) !void {
     defer allocator.free(tokens);
 
     var par = parser.Parser.init(allocator, tokens);
-    const ast = par.parse() catch |err| {
+    var ast = par.parse() catch |err| {
         std.debug.print("Parser error: {}\n", .{err});
         std.process.exit(1);
     };
