@@ -9,10 +9,16 @@ Format follows Keep a Changelog. Versioning follows Semantic Versioning.
 
 ### Added
 - Zig compiler with lexer, parser and C++17 code generator.
-- Rust installer for Windows.
-- C++ runtime header and stub.
-- PHP landing page.
-- OCaml reference AST.
-- Ruby local build helper.
-- CI workflow for Zig, Rust, C++, PHP, OCaml and Ruby.
-- MIT license, `.gitignore`, `.gitattributes`, issue and PR templates.
+- Support for `fn`, `let`, `var`, `return`, `print`.
+- Types: `i32`, `i64`, `f64`, `bool`, `string`, `void`.
+- Transpiles to C++17 and compiles with `g++`.
+- Example program `hello.zph`.
+
+### Changed
+- Migrated compiler to Zig 0.17 API:
+  - `std.process.Init` for `main`.
+  - `std.Io.Dir` for file access.
+  - `std.Io.Writer.Allocating` for code generation.
+  - `std.process.spawn` for launching `g++`.
+  - `DebugAllocator` instead of `GeneralPurposeAllocator`.
+  - `ArrayList.empty` and `append(allocator, ...)`.
