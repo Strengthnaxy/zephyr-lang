@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  zig:
+    name: Zig compiler
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: mlugg/setup-zig@v1
+        with:
+          version: 0.13.0
+      - name: Build
+        working-directory: zig
+        run: zig build -Doptimize=ReleaseSafe
+      - name: Smoke test
+        run: |
+          cd zig
+          ./zig-out/bin/zephyr ../examples/hello.zph -o /tmp/hello
+          /tmp/hello
+
+  cpp:
+    name: C++ runtime
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile runtime
+        run: g++ -std=c++17 -c cpp/runtime.cpp -o /tmp/runtime.o
+
+  rust:
+    name: Rust installer
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Build
+        working-directory: rust
+        run: cargo build --release
+
+  elixir:
+    name: Elixir LSP prototype
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: "26"
+          elixir-version: "1.16"
+      - name: Compile
+        working-directory: elixir
+        run: elixirc zephyr_lsp.ex
+
+  haskell:
+    name: Haskell AST
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: haskell-actions/setup@v2
+        with:
+          ghc-version: "9.6"
+      - name: Compile
+        working-directory: haskell
+        run: ghc -fno-code ZephyrAst.hs
