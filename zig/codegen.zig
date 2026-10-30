@@ -12,68 +12,68 @@ fn type_to_cpp(t: parser.Type) []const u8 {
     };
 }
 
-fn emit_expr(out: *std.ArrayList(u8), allocator: std.mem.Allocator, e: *parser.Expr) !void {
+fn emit_expr(out: *std.Io.Writer.Allocating, e: *parser.Expr) !void {
     switch (e.*) {
-        .number => |n| try out.writer(allocator).print("{d}", .{n}),
-        .string => |s| try out.writer(allocator).print("\"{s}\"", .{s}),
-        .var_ref => |v| try out.writer(allocator).print("{s}", .{v}),
+        .number => |n| try out.writer.print("{d}", .{n}),
+        .string => |s| try out.writer.print("\"{s}\"", .{s}),
+        .var_ref => |v| try out.writer.print("{s}", .{v}),
         .bin => |b| {
-            try out.append(allocator, '(');
-            try emit_expr(out, allocator, b.lhs);
-            try out.appendSlice(allocator, " + ");
-            try emit_expr(out, allocator, b.rhs);
-            try out.append(allocator, ')');
+            try out.writer.writeByte('(');
+            try emit_expr(out, b.lhs);
+            try out.writer.writeAll(" + ");
+            try emit_expr(out, b.rhs);
+            try out.writer.writeByte(')');
         },
         .call => |c| {
-            try out.writer(allocator).print("{s}(", .{c.name});
+            try out.writer.print("{s}(", .{c.name});
             for (c.args, 0..) |a, i| {
-                if (i > 0) try out.appendSlice(allocator, ", ");
-                try emit_expr(out, allocator, a);
+                if (i > 0) try out.writer.writeAll(", ");
+                try emit_expr(out, a);
             }
-            try out.append(allocator, ')');
+            try out.writer.writeByte(')');
         },
     }
 }
 
-fn emit_stmt(out: *std.ArrayList(u8), allocator: std.mem.Allocator, s: parser.Stmt) !void {
+fn emit_stmt(out: *std.Io.Writer.Allocating, s: parser.Stmt) !void {
     switch (s) {
         .let_decl => |d| {
-            try out.writer(allocator).print("  {s} {s} = ", .{ type_to_cpp(d.ty), d.name });
-            try emit_expr(out, allocator, d.value);
-            try out.appendSlice(allocator, ";\n");
+            try out.writer.print("  {s} {s} = ", .{ type_to_cpp(d.ty), d.name });
+            try emit_expr(out, d.value);
+            try out.writer.writeAll(";\n");
         },
         .return_stmt => |r| {
-            try out.appendSlice(allocator, "  return");
+            try out.writer.writeAll("  return");
             if (r) |e| {
-                try out.append(allocator, ' ');
-                try emit_expr(out, allocator, e);
+                try out.writer.writeByte(' ');
+                try emit_expr(out, e);
             }
-            try out.appendSlice(allocator, ";\n");
+            try out.writer.writeAll(";\n");
         },
         .print => |e| {
-            try out.appendSlice(allocator, "  std::cout << ");
-            try emit_expr(out, allocator, e);
-            try out.appendSlice(allocator, " << std::endl;\n");
+            try out.writer.writeAll("  std::cout << ");
+            try emit_expr(out, e);
+            try out.writer.writeAll(" << std::endl;\n");
         },
         .expr => |e| {
-            try out.appendSlice(allocator, "  ");
-            try emit_expr(out, allocator, e);
-            try out.appendSlice(allocator, ";\n");
+            try out.writer.writeAll("  ");
+            try emit_expr(out, e);
+            try out.writer.writeAll(";\n");
         },
     }
 }
 
 pub fn generate(allocator: std.mem.Allocator, prog: parser.Program) ![]u8 {
-    var out = std.ArrayList(u8).empty;
-    errdefer out.deinit(allocator);
+    var out: std.Io.Writer.Allocating = .init(allocator);
+    errdefer out.deinit();
 
-    try out.appendSlice(allocator, "#include <iostream>\n#include <string>\n#include <cstdint>\n\n");
+    try out.writer.writeAll("#include <iostream>\n#include <string>\n#include <cstdint>\n\n");
 
     for (prog.functions) |f| {
-        try out.writer(allocator).print("{s} {s}() {{\n", .{ type_to_cpp(f.ret), f.name });
-        for (f.body) |s| try emit_stmt(&out, allocator, s);
-        try out.appendSlice(allocator, "}\n\n");
+        try out.writer.print("{s} {s}() {{\n", .{ type_to_cpp(f.ret), f.name });
+        for (f.body) |s| try emit_stmt(&out, s);
+        try out.writer.writeAll("}\n\n");
     }
 
-    return out.toOwnedSlice(allocator);
+    return out.toOwnedSlice();
 }
