@@ -1,0 +1,42 @@
+name: CI (beta)
+
+on:
+  push:
+    branches: [ v0.2.1-beta ]
+  pull_request:
+    branches: [ v0.2.1-beta ]
+
+jobs:
+  ruby:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+      - run: for f in ruby/*.rb; do ruby -c "$f"; done
+
+  rust:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - run: cd rust && cargo build --release
+
+  zig:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: mlugg/setup-zig@v1
+        with:
+          version: 0.17.0
+      - run: cd zig && zig build
+
+  ocaml:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ocaml/setup-ocaml@v3
+        with:
+          ocaml-compiler: '5.2'
+      - run: cd ocaml && dune build
