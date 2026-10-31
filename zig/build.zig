@@ -3,22 +3,12 @@ const std = @import("std");
 pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
-
     const mod = b.createModule(.{
         .root_source_file = b.path("main.zig"),
         .target = target,
         .optimize = optimize,
         .link_libc = true,
     });
-
-    const exe = b.addExecutable(.{
-        .name = "zephyr",
-        .root_module = mod,
-    });
+    const exe = b.addExecutable(.{ .name = "zephyr-zig", .root_module = mod });
     b.installArtifact(exe);
-
-    const run_step = b.step("run", "Run the compiler");
-    const run_cmd = b.addRunArtifact(exe);
-    run_step.dependOn(&run_cmd.step);
-    run_cmd.step.dependOn(b.getInstallStep());
 }
