@@ -5,9 +5,11 @@ require_relative 'error'
 
 module Zephyr
   class ExprParser
-    def initialize(toks)
+    attr_reader :pos
+
+    def initialize(toks, pos = 0)
       @toks = toks
-      @pos = 0
+      @pos = pos
     end
 
     def parse = parse_or
@@ -27,11 +29,13 @@ module Zephyr
     private
 
     def peek = @toks[@pos]
+
     def next_token
       t = @toks[@pos]
       @pos += 1 if @pos < @toks.length - 1
       t
     end
+
     def expect(tt)
       t = next_token
       raise ParseError, "Expected #{tt}, got #{t.type}" unless t.type == tt
@@ -46,6 +50,7 @@ module Zephyr
       end
       l
     end
+
     def parse_and
       l = parse_cmp
       while peek.type == :and_and
@@ -54,6 +59,7 @@ module Zephyr
       end
       l
     end
+
     def parse_cmp
       l = parse_add
       while %i[eq_eq bang_eq lt gt le ge].include?(peek.type)
@@ -62,6 +68,7 @@ module Zephyr
       end
       l
     end
+
     def parse_add
       l = parse_mul
       while %i[plus minus].include?(peek.type)
@@ -70,6 +77,7 @@ module Zephyr
       end
       l
     end
+
     def parse_mul
       l = parse_prim
       while %i[star slash].include?(peek.type)
@@ -78,6 +86,7 @@ module Zephyr
       end
       l
     end
+
     def parse_prim
       t = next_token
       case t.type
@@ -105,7 +114,8 @@ module Zephyr
         e = parse
         expect(:rparen)
         e
-      else raise ParseError, "Unexpected prim: #{t.type}"
+      else
+        raise ParseError, "Unexpected prim: #{t.type}"
       end
     end
   end
