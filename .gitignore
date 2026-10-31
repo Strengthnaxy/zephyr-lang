@@ -7,6 +7,24 @@ zig/zig-out/
 *.a
 *.lib
 
+# Rust
+rust/target/
+Cargo.lock
+
+# Ruby
+ruby/.bundle/
+ruby/vendor/
+*.gem
+
+# OCaml
+ocaml/_build/
+*.cmi
+*.cmo
+*.cmx
+
+# PHP
+php/vendor/
+
 # Generated output
 *.cpp
 hello
