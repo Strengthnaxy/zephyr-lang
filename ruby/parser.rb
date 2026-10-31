@@ -26,15 +26,25 @@ module Zephyr
     private
 
     def peek = @toks[@pos]
+
     def next_token
       t = @toks[@pos]
       @pos += 1 if @pos < @toks.length - 1
       t
     end
+
     def expect(tt)
       t = next_token
-      raise ParseError, "Expected #{tt}, got #{t.type}" unless t.type == tt
+      raise ParseError, "Expected #{tt}, got #{t.type} (#{t.value.inspect})" unless t.type == tt
       t
+    end
+
+    def parse_expr
+      # Разбираем выражение на тех же токенах и с той же позицией
+      ep = ExprParser.new(@toks, @pos)
+      e = ep.parse
+      @pos = ep.pos
+      e
     end
 
     def parse_type
@@ -80,18 +90,18 @@ module Zephyr
         expect(:colon)
         ty = parse_type
         expect(:assign)
-        v = ExprParser.new(@toks[@pos..]).parse
+        v = parse_expr
         expect(:semicolon)
         Stmt.new(kw.type == :var ? :var : :let, name, ty, v)
       when :return
         next_token
-        v = peek.type == :semicolon ? nil : ExprParser.new(@toks[@pos..]).parse
+        v = peek.type == :semicolon ? nil : parse_expr
         expect(:semicolon)
         Stmt.new(:return, nil, nil, v)
       when :if
         next_token
         expect(:lparen)
-        c = ExprParser.new(@toks[@pos..]).parse
+        c = parse_expr
         expect(:rparen)
         then_body = block
         els = peek.type == :else ? (next_token; block) : nil
@@ -99,22 +109,23 @@ module Zephyr
       when :while
         next_token
         expect(:lparen)
-        c = ExprParser.new(@toks[@pos..]).parse
+        c = parse_expr
         expect(:rparen)
         Stmt.new(:while, nil, nil, nil, block, c)
       when :ident
         if peek.value == 'print'
           next_token
           expect(:lparen)
-          v = ExprParser.new(@toks[@pos..]).parse
+          v = parse_expr
           expect(:rparen)
           expect(:semicolon)
           return Stmt.new(:print, nil, nil, v)
         end
-        e = ExprParser.new(@toks[@pos..]).parse
+        e = parse_expr
         expect(:semicolon)
         Stmt.new(:expr, nil, nil, e)
-      else raise ParseError, "Unexpected stmt: #{peek.type}"
+      else
+        raise ParseError, "Unexpected stmt: #{peek.type}"
       end
     end
   end
